@@ -4,7 +4,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .services import get_free_slots_for_specializations_in_date_range
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import authentication_classes, permission_classes
 
+
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 class FreeSlotsForSpecializationsInDateRangeView(APIView):
 
     def get(self, request):

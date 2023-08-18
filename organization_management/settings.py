@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_ajax',
     'import_export',
     'rest_framework',
+    'rest_framework.authtoken',
 
     'customer',
     'account',
@@ -72,6 +73,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'organization_management.urls'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
 
 TEMPLATES = [
     {

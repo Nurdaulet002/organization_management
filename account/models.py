@@ -3,6 +3,7 @@ from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericRelation
 from register.models import Schedule
+from rest_framework.authtoken.models import Token
 
 
 # Базовый абстрактный класс
@@ -121,3 +122,9 @@ class User(AbstractUser):
     @property
     def full_name(self):
         return "{} {}".format(self.last_name, self.first_name)
+
+    def save(self, *args, **kwargs):
+        is_new = not self.pk
+        super(User, self).save(*args, **kwargs)
+        if is_new:
+            Token.objects.create(user=self)
