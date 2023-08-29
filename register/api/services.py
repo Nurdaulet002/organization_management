@@ -1,4 +1,8 @@
 # services.py
+import requests
+from requests.exceptions import JSONDecodeError
+
+
 from datetime import timedelta, datetime
 from django.contrib.contenttypes.models import ContentType
 from register.models import Schedule
@@ -57,3 +61,20 @@ def get_free_slots_for_specializations_in_date_range(specializations, start_date
         current_date += timedelta(days=1)
 
     return result
+
+
+def create_examination_result(data):
+    print(data, '===========')
+    result = []
+    url_api = '82.200.165.222:19603'
+    token_api = '880430a839696607383313b109e5a0599617219b'
+    print(type(data.get('examination_appointment')), '======================')
+    json_data = {
+        'examination_appointment': data.get('examination_appointment'),
+        'icd': data.get('icd'),
+        'conclusion': data.get('conclusion'),
+        'recommendations': data.get('recommendations'),
+    }
+    url_invoice_api = 'http://82.200.165.222:19603/api/customer_personal_cabinet/api/examination/result'
+    result = requests.post(url_invoice_api, data=json_data, headers={'Authorization': 'Token ' + token_api})
+    return result.json()

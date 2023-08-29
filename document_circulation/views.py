@@ -1,4 +1,7 @@
 import json
+import requests
+import weasyprint
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponse, JsonResponse
@@ -6,7 +9,6 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.views.generic.base import TemplateResponseMixin, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-import weasyprint
 
 from cashier.api.client import api_invoice_create
 from register.models import Schedule
@@ -15,7 +17,11 @@ from customer.api.client import get_customer_by_iin
 from .models import Form, FormHistory, Marker, AdaptiveMarker,\
     ReadyPhrase, FuncStructureForm
 from .forms import ReadyPhraseForm
+from register.api.services import create_examination_result
 
+api2_url = '82.200.165.222:19603'
+api2_token = 'fae4cf4a68dd19f96e901bb5c03ec321301ae52d'
+insurance = 'insurance1'
 
 # Заполнить форму внутри ИБ
 class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
@@ -30,6 +36,13 @@ class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
             self.history = get_object_or_404(FormHistory, id=self.history)
         if self.form:
             self.form = get_object_or_404(Form, id=self.form)
+        url_customer_search_api = 'http://{}/api/customer_personal_cabinet/customer/examination/appointment?insurance={}&iin={}'.format(api2_url, insurance, self.customer.iin)
+        result = requests.get(url_customer_search_api, headers={
+            'Authorization': 'Token ' + api2_token})
+        result.raise_for_status()
+        data = result.json()
+        print(data)
+        self.appointments = data[0].get('Data', [])
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -44,7 +57,8 @@ class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
             'customer': self.customer,
             'histories': histories,
             'schedule': self.schedule,
-            'insurances': insurances
+            'insurances': insurances,
+            'appointments': self.appointments
         })
 
     def post(self, request, *args, **kwargs):
@@ -301,3 +315,20 @@ class AdminFormDetail(LoginRequiredMixin, TemplateResponseMixin, View):
         return self.render_to_response({
             'form': form
         })
+
+
+class CreateExaminationResultView(View):
+
+    def post(self, request, *args, **kwargs):
+        examination_appointment = request.POST.get('examination_appointment')
+        icd = request.POST.get('icd')
+        conclusion = request.POST.get('conclusion')
+        recommendations = request.POST.get('recommendations')
+        data = {
+            'examination_appointment': examination_appointment,
+            'icd': icd,
+            'conclusion': conclusion,
+            'recommendations': recommendations
+        }
+        examination_result = create_examination_result(data)
+        return JsonResponse({'success': True})

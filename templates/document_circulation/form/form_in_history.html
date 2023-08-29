@@ -2,7 +2,32 @@
 {% load widget_tweaks %}
 {% load form_tags %}
 {% block content %}
-<div class="az-dashboard-nav az-dashboard-nav-breadcrumbs"> 
+<style>
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active-div, .collapsible:hover {
+  background-color: #555;
+}
+
+.content-examination {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+</style>
+
+<div class="az-dashboard-nav az-dashboard-nav-breadcrumbs">
   <nav class="nav">
     <a href="{% url 'inspection:reception_with_action_list' %}" class="nav-link active">Пациенты</a>
     <span>/</span>
@@ -58,6 +83,23 @@
                           </div>
                           <hr>
                       {% endfor %}
+                    {% for appointment in appointments %}
+                    <button type="button" class="collapsible">{{ appointment.service_title }}</button>
+                    <div class="content-examination">
+                        <form action="{% url 'document_circulation:examination_result_create' %}" method="post">
+                            {% csrf_token %}
+                            <label for=""><b>Услуга</b></label>:<br>
+                            <input type="text" name="examination_appointment" value="{{ appointment.service_title }}"><br>
+                            <label for=""><b>Код МКБ-10</b></label>:<br>
+                            <input type="text" name="icd" placeholder="..."><br>
+                            <label for=""><b>Заключение</b></label>:<br>
+                            <input type="text" name="conclusion" placeholder=""><br>
+                            <label for=""><b>Рекомендация</b></label>:<br>
+                            <input type="text" name="recommendations" placeholder=""><br>
+                            <input type="submit" value="Сохранить">
+                            </form>
+                    </div>
+                    {% endfor %}
                   </div>
               {% endif %}
               </div>
@@ -627,6 +669,21 @@
         }
       })
   })
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
   
 
 {% endblock %}

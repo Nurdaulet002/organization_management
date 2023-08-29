@@ -382,63 +382,117 @@ $(document).on("click", ".fill-last-customer", function() {
  })*/
 
  $(document).on('click', '#api-customer-search', function(e){
-    var search_val = $('#id_iin').val()
-    var url = $(this).data('url')
+    var search_val = $('#id_iin').val();
+    var url = $(this).data('url');
     $.ajax({
-      type: 'get',
-      url: url,
-      data: {search_val: search_val},
-      success: function(response) {
-        const gender = response.gender
-        $('#id_last_name').val(response.last_name)
-        $('#id_first_name').val(response.first_name)
-        $('#id_surname').val(response.surname)
+        type: 'get',
+        url: url,
+        data: {search_val: search_val},
+        success: function(response) {
+            // Handle the response from the first API (data1)
+            const gender = response.data1.gender;
+            $('#id_last_name').val(response.data1.last_name);
+            $('#id_first_name').val(response.data1.first_name);
+            $('#id_surname').val(response.data1.surname);
+            $('#id_date_birth').val(response.data1.birthday);
+            $('#id_address').val(response.data1.address);
+            $('#id_place_work').val(response.data1.place_work);
+            $('#id_phono_number').val(response.data1.telephone_number);
 
-        $('#id_date_birth').val(response.birthday)
-        $('#id_address').val(response.address)
-        $('#id_place_work').val(response.place_work)
-        $('#id_phono_number').val(response.telephone_number)
-        if(gender){
-            if(gender == 'Мужчина'){
-                $('#id_gender').val('man')
+            if(gender){
+                if(gender == 'Мужчина'){
+                    $('#id_gender').val('man');
+                }
+                else{
+                    $('#id_gender').val('woman');
+                }
             }
-            else{
-                $('#id_gender').val('woman')
-            }
+
+            var html_data = '';
+
+            $.each(response.data1.customer_insurance, function (index, value){
+                html_data += `<div class="row">
+                    <div class="col-md-12">
+                        <h5>Страховая карта</h5>
+                    </div>
+                    <div class="col-md-12">
+                        <label><b>Номер карты :</b></label>
+                        ${value.card_number}
+                    </div>
+                    <div class="col-md-12">
+                        <label><b>Программа :</b></label>
+                        ${value.program}
+                    </div>
+                    <div class="col-md-12">
+                        <label><b>Страховщик :</b></label>
+                        ${value.insurance}
+                    </div>
+                    <div class="col-md-12">
+                        <label><b>Дата начала :</b></label>
+                        ${value.begin_date}
+                    </div>
+                    <div class="col-md-12">
+                        <label><b>Дата окончания :</b></label>
+                        ${value.end_date}
+                    </div>
+                </div>`;
+            });
+
+            $('#id_insurance_content').html(html_data);
+
+            // Handle the response from the second API (data2)
+            // This is a placeholder. Update this part based on your data2 structure and display requirements.
+            // For example, if you want to update a certain DOM element with data from the second API:
+            const statusDisplay = {
+                'Planned': 'Запланировано',
+                'Completed': 'Завершено',
+                'Canceled': 'Отменен',
+                // добавьте другие статусы по мере необходимости
+            };
+            professional_examination_content = '';
+            let contract = '';
+            let program = '';
+
+            for (let item of response.data2) {
+                for (let dataItem of item.Data) {
+                    contract = `<b>Контракт</b>: ${dataItem.contract}`;
+                    program = `<b>Программа</b>: ${dataItem.program}`;
+                    $('#contract-id').html(contract);
+                    $('#program-id').html(program);
+
+                    $.each(dataItem.services, function(index, value) {
+                        let humanReadableStatus = statusDisplay[value.status] || value.status;
+                        professional_examination_content += `<div class="row">
+                            <div class="col-md-12">
+                                <h5>Обследование Назначение</h5>
+                            </div>
+                            <div class="col-md-12">
+                                <label><b>Услуга :</b></label>
+                                ${value.service_title}
+                            </div>
+                            <div class="col-md-12">
+                                <label><b>Доктор код :</b></label>
+                                ${value.doctor_code}
+                            </div>
+                            <div class="col-md-12">
+                                <label><b>Дата :</b></label>
+                                ${value.date_time}
+                            </div>
+                            <div class="col-md-12">
+                                <label><b>Статус :</b></label>
+                                ${humanReadableStatus}
+                            </div>
+                        </div>`;
+                    });
+                }
+                }
+
+            $('#id_customer_professional_examination_content').html(professional_examination_content);
+
+            // Add more logic as required to handle and display the data from the second API.
         }
-        var html_data = ''
-        $.each(response.customer_insurance , function (index, value){
-            html_data += `<div class="row">
-                <div class="col-md-12">
-                    <h5>Страховая карта</h5>
-                </div>
-                <div class="col-md-12">
-                    <label><b>Номер карты :</b></label>
-                    ${value.card_number}
-                </div>
-                <div class="col-md-12">
-                    <label><b>Программа :</b></label>
-                    ${value.program}
-                </div>
-                <div class="col-md-12">
-                    <label><b>Страховщик :</b></label>
-                    ${value.insurance}
-                </div>
-                <div class="col-md-12">
-                    <label><b>Дата начала :</b></label>
-                    ${value.begin_date}
-                </div>
-                <div class="col-md-12">
-                    <label><b>Дата окончания :</b></label>
-                    ${value.end_date}
-                </div>
-            </div>`
-        })
-
-		$('#id_insurance_content').html(html_data)
-      }
     });
- })
+});
 
 
 

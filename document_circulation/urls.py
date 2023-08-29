@@ -41,4 +41,6 @@ urlpatterns = [
          views.AudioTextView.as_view(), name='audio_text'),
     path('admin/form/<int:pk>/detail', views.AdminFormDetail.as_view(),
          name='admin_form_detail'),
+    path('examination/result/create', views.CreateExaminationResultView.as_view(),
+         name='examination_result_create'),
 ]
