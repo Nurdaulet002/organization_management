@@ -4,6 +4,10 @@
 {% block content %}
 <style>
 .collapsible {
+  cursor: pointer;
+}
+
+/*.collapsible {
   background-color: #777;
   color: white;
   cursor: pointer;
@@ -18,12 +22,16 @@
 .active-div, .collapsible:hover {
   background-color: #555;
 }
-
+*/
 .content-examination {
-  padding: 0 18px;
+  padding: 9px 9px;
   display: none;
   overflow: hidden;
-  background-color: #f1f1f1;
+  background-color:#ffff0038;
+  display: block;
+    color: #140552;
+    font-size: 13px;
+    cursor: pointer;
 }
 </style>
 
@@ -116,26 +124,56 @@
   <div class="col-md-6">
     <div class="card panel-info">
       <div class="card-header panel-heading">
-        <b>История болезни </b>
+        <b>Счет реестер/Оплата услуг</b>
       </div>
       <div class="card-body">
-       {% for appointment in appointments %}
-                    <button type="button" class="collapsible">{{ appointment.service_title }}</button>
-                    <div class="content-examination">
-                        <form action="{% url 'document_circulation:examination_result_create' %}" method="post">
-                            {% csrf_token %}
-                            <label for=""><b>Услуга</b></label>:<br>
-                            <input type="text" name="examination_appointment" value="{{ appointment.service_title }}"><br>
-                            <label for=""><b>Код МКБ-10</b></label>:<br>
-                            <input type="text" name="icd" placeholder="..."><br>
-                            <label for=""><b>Заключение</b></label>:<br>
-                            <input type="text" name="conclusion" placeholder=""><br>
-                            <label for=""><b>Рекомендация</b></label>:<br>
-                            <input type="text" name="recommendations" placeholder=""><br>
-                            <input type="submit" value="Сохранить">
-                            </form>
+        <table class="table table-condensed table-bottom" style="font-size: 13px;">
+          <tbody id="history-search-content">
+            {% for appointment in appointments %}
+            <tr>
+              <td class="td-hover">
+                <div class="" style="cursor:pointer;" data-bs-toggle="collapse" data-parent="#accordion" href="#collapse{{appointment.id}}" aria-expanded="false">
+                  {{ appointment.service_title }}
+                </div>
+              </td>
+            </tr>
+            <tr class="collapse" id="collapse{{appointment.id}}">
+              <td class="p-0">
+                <div class="content-examination">
+                  <form action="{% url 'document_circulation:examination_result_create' %}" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label for=""><b>Услуга</b></label>
+                        <input type="text" class="form-control" name="examination_appointment" value="{{ appointment.service_title }}">
+                      </div>
+                      <div class="col-md-6">
+                        <label for=""><b>Код МКБ-10</b></label>
+                        <input type="text" class="form-control" name="icd" placeholder="...">
+                      </div>
+                      <div class="col-md-6">
+                        <label for=""><b>Заключение</b></label>
+                        <input type="text" class="form-control" name="conclusion" placeholder="">
+                      </div>
+                      <div class="col-md-6">
+                        <label for=""><b>Рекомендация</b></label>
+                        <input type="text" class="form-control" name="recommendations" placeholder="">
+                      </div>
+                      <div class="col-md-12">
+                        <div class="pull-right forma_reg">
+                          <button type="submit" class="btn btn btn-success btn-sm save_nap_strah" >Сохранить</button>
+                        </div>
+                      </div>
                     </div>
-                    {% endfor %}
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+  
+        
       </div>
     </div>
   </div>

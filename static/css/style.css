@@ -1350,3 +1350,12 @@ ul.jqtree-tree .jqtree-title {
     color: #11a114;
     font-weight: 600;
 }
+.table-bottom tr td a {
+  color: #140552;
+  font-size: 13px;
+  font-size: 14px;
+  text-decoration: none;
+}
+.table-bottom tr td a:hover {
+  text-decoration: underline;
+}
