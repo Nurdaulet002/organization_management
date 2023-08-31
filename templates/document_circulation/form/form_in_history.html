@@ -6,101 +6,91 @@
   <nav class="nav">
     <a href="{% url 'inspection:reception_with_action_list' %}" class="nav-link active">Пациенты</a>
     <span>/</span>
-    <a class="nav-link"  href="#" style="color: #657085">Форма записей</a>
+    <a class="nav-link"  href="#" style="color: #657085">Медицинские записи</a>
   </nav>
   <nav class="nav">
-    <a id="schedule-create" data-customer="" class="nav-link" href="#">
+    <!-- <a id="schedule-create" data-customer="" class="nav-link" href="#">
         <i class="fa fa-calendar" aria-hidden="true"></i></i>Назначить услугу
-    </a>
+    </a> -->
   </nav>
 
 </div>
+<input type="hidden" id="id_active_marker" value="{{ marker }}">  
+{% if history %}
+  {% is_pdf history as is_pdf %}
+  {% if not is_pdf %}
+    {% include "document_circulation/form/form.html" %}
+  {% else %}
+    {% include "document_circulation/history/detail.html" %}
+  {% endif %}
+{% else %}
 <div class="row">
-    <input type="hidden" id="id_active_marker" value="{{ marker }}">
-    <div class="col-md-12 col-lg-8 col-xl-8 col-sm-12">
-      {% if history %}
-        {% is_pdf history as is_pdf %}
-        {% if not is_pdf %}
-          {% include "document_circulation/form/form.html" %}
-        {% else %}
-          {% include "document_circulation/history/detail.html" %}
-        {% endif %}
-      {% else %}
-        <div class="card card-dashboard-one ">
-          <div class="card-body">
-            <div class="mailbox-messages">
-              <div class="">
-                <div class="mb-2"><b>Клиент:</b> {{ customer }}</div>
-                <div class="mb-2"><b>Дата рождения:</b> {{ customer.date_birth }} </div>
-                  <div class="mb-2"><b>Пол:</b> {{ customer.get_gender_display |default_if_none:"---" }} </div>
-              </div>
-              <div>
-              {% if insurances %}
-                  <div class="mt-4">
-                      <h5 class="mb-3">Страховые карты клиента</h5>
-                      {% for insurance in insurances.customer_insurance %}
-                          <div class="row">
-                              <div class="col-md-2">
-                                  Номер карты: {{ insurance.card_number }}
-                              </div>
-                              <div class="col-md-2">
-                                  Программа {{ insurance.program }}
-                              </div>
-                              <div class="col-md-2">
-                                  Страховщик: {{ insurance.insurance }}
-                              </div>
-                              <div class="col-md-2">
-                                  Дата начала: {{ insurance.begin_date }}
-                              </div>
-                              <div class="col-md-2">
-                                  Дата окончания: {{ insurance.end_date }}
-                              </div>
-                          </div>
-                          <hr>
-                      {% endfor %}
-                  </div>
-              {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-      {% endif %}
-    </div>
-    <div class="col-lg-4 right-block">
-      <div class="card card-dashboard-one " id="fixed-sidbar">
-        <div class="">
-          <div class="az-dashboard-nav az-dashboard-nav-forma"> 
-            <nav class="nav  nav-pills">
-              <a class="nav-link  nav-link-history active" href="#" id="content-history-tab" data-bs-toggle="pill" data-bs-target="#content-history" type="button" role="tab" aria-controls="content-history" aria-selected="true">История болезни</a>
-
-              <a class="nav-link  nav-link-history" href="#"  id="content-ready-phrase-tab" data-bs-toggle="pill" data-bs-target="#content-ready-phrase" type="button" role="tab"
-                aria-controls="content-ready-phrase" aria-selected="false" disabled> Готовые шаблоны</a>
-            </nav>
-          </div>
-        </div>
-        <div class="card-body p-0">
-          <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade show active" id="content-history" role="tabpanel" aria-labelledby="content-history-tab">
-              <div class="disease-history">
-                {% include "document_circulation/history/list.html" %}
-                <button type="button" class="get-forms btn btn-success btn-sm btn-new-crete">+ Cоздать новую запись</button>
-              </div>
-            </div>
-            <div class="tab-pane fade" id="content-ready-phrase" role="tabpanel" aria-labelledby="content-ready-phrase-tab">
-              <div class="disease-history">
-                <div class="input-group mb-2 mt-2">
-                  <input type="text" class="form-control" id="ready-phrase-search" placeholder="..." aria-label="Recipient's username" aria-describedby="button-addon2">
-                  <button class="btn btn-primary" type="button" id="ready-phrase-button">Поиск шаблона</button>
-                </div>
-                <div id="tree-content" class="ready_phrase" data-url="' + url + '" data-schedule="{{ schedule.id }}"></div>
-                <button type="button" id="setting-ready-phrase" class="btn btn-primary btn-sm btn-new-crete">Настроить готовый шаблон</button>
-              </div>
-            </div>
-          </div>
+  <div class="col-md-12 mb-3">
+    <div class="card panel-info">
+      <div class="card-header panel-heading">
+        <div class="btn-group">
+          <a type="button" class="iconfa btn btn-sm btn-default btn-xs collapsed" data-bs-toggle="collapse" data-parent="#accordion" href="#collapsPasient" aria-expanded="false">
+              <span class="fa fa-chevron-down"></span>
+          </a>
+        </div>&nbsp;&nbsp;
+        <b>Информация о пациенте</b>
+        <span class="pasoent-fio">{{ customer }} </span>
+        <span class="">
+          <button id="start_priem" data-id="546097" class="doctor_forms_modal btn btn-sm btn-xs btn-success" data-toggle="modal" data-target=".bs-example-modal-forma">Начать прием</button>
+          <button id="end_priem" data-id="546097" class="btn btn-xs btn-sm btn-danger">Завершить прием</button>
+        </span>
+        <span class="pull-right">
+          <button id="start_priem" id="setting-ready-phrase"  class=" btn btn-sm btn-default get-forms" >Открытие/настройка форм</button>
+        </span>
+      </div>
+      <div class="collapse" id="collapsPasient">
+        <div class="card-body">
+          <table class="table-condensed w-100 table-fio">
+            <tbody>
+              <tr>
+                <td><span class="info-b">Дата рождения:</span>{{ customer.date_birth }}</td>
+                <td><span class="info-b">Пол:</span>{{ customer.get_gender_display |default_if_none:"---" }}</td>
+                <td><span class="info-b">ИИН:</span>2804DH5 </td>
+              </tr> 
+              {% if insurances %} 
+                <tr>
+                  <td colspan="3">
+                    <h6>Страховые карты клиента</h6>
+                  </td>
+                </tr>
+                {% for insurance in insurances.customer_insurance %}
+                <tr>
+                  <td><span class="info-b">Номер карты: </span>{{ insurance.card_number }}</td>
+                  <td><span class="info-b">Программа </span>{{ insurance.program }}</td>
+                  <td><span class="info-b">Страховщик:</span> {{ insurance.insurance }}</td>
+                </tr>  
+                <tr>
+                  <td><span class="info-b">Дата начала:</span> {{ insurance.begin_date }}</td>
+                  <td><span class="info-b"> Дата окончания: </span>{{ insurance.end_date }}</td>
+                  <td><span class="info-b"></span></td>
+                </tr> 
+                {% endfor %}
+              {% endif %}                          
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card panel-info">
+      <div class="card-header panel-heading">
+        <b>История болезни </b>
+      </div>
+      <div class="card-body">
+        {% include "document_circulation/history/list.html" %}
+      </div>
+    </div>
+  </div>
 </div>
+{% endif %}
+    
 {% endblock %}
 
 

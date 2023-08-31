@@ -22,13 +22,13 @@
 	<title>NeuroMed</title>
 </head>
 <body>
-	<div class="header">
-		<nav class="navbar navbar-dark bg-primary">
+	<div class="header border-bt">
+		<nav class="navbar navbar-dark bg-white">
 			<div class="container-fluid">
 				<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
 					<span class="navbar-toggler-icon"></span>
 				</button>
-				<a class="navbar-brand" href="#">Euromedix</a>
+				<a class="navbar-brand" href="#"><img class="logo" src="{% static 'new/img/logo.png' %}"></a>
 				<div class="header-main">
 					<ul class="main-ul">
 						{% if request.user.user_type == 1 or request.user.user_type == 2 %}
@@ -60,14 +60,22 @@
 					</ul>
 				</div>
 				<div class="d-flex align-items-center">
-					<div class="">
-						<a href="" class="user-title dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-							{{ request.user.full_name }}
-						</a>
-						<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-						    <li><a class="dropdown-item" href="{% url 'logout' %}?next=/">Завершить работу</a></li>
-						</ul>
-					</div>
+					<ul class="nav navbar-nav">
+		              <li>
+		                <ul class="list-unstyled list-unstyled-navbar" style="text-align: end;">
+		                
+		                    <li><a href="#" class="info-b">ТОО «Archimedes Kazakhstan»<span class="sr-only">(current)</span></a></li>
+		                    <li class="">
+		                    	<a href="" class="user-title dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+									{{ request.user.full_name }}
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+								    <li><a class="dropdown-item" href="{% url 'logout' %}?next=/">Завершить работу</a></li>
+								</ul>
+		                  	</li>
+		                </ul>
+		              </li>
+		            </ul>
 					<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
 						<div class="offcanvas-header">
 							<h5 class="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>

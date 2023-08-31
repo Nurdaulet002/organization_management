@@ -3,70 +3,31 @@
 {% load inspection_tags %}
 
 {% block content %}
-{% if messages %}
-    {% for message in messages %}
-        <div id="myToast" class="toast show align-items-center text-white bg-secondary" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-            <div class="toast-body">
-                {{ message }}
-            </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-         </div>
-    {% endfor %}
-{% endif %}
-<div class="row">
-	<div class="col-md-12 col-lg-12 col-xl-8 col-sm-12">
-		<div class="card card-dashboard-one ">
-			<div class="card-header">
-				<div class="d-sm-flex mb-1 justify-content-between">
-					<div class="d-flex align-items-stretch">
-						<select id="id_mode" name="mode" class="form-control w-50">
-							<option value="daily" {% compare_set_class mode 'daily' 'selected' %}>Ежедневно</option>
-							<option value="weekly" {% compare_set_class mode 'weekly' 'selected' %}>Еженедельно</option>
-						</select>
-						{% get_week_by_date date as week %}
-						<input type="week" id="id_weekly" type="text" name="week" value="{{week}}"
-						class="form-control w-50 ml-2 {% compare_set_class mode 'weekly' '' 'd-none' %}" >
-						<input type="date" id="id_daily" type="text" name="date" value="{{date}}"
-						class="form-control w-50 ml-2 {% compare_set_class mode 'daily' '' 'd-none' %}">
-					</div>
-					<form class="form-header-card ml-lg-auto ml-sm-auto d-flex pt-md-0 justify-content-end">
-						<!--input type="text" class="form-control w-50" placeholder="Поиск"-->
-						<a href="#" class="btn btn-primary btn-form no-wrap ml-2 "  id="schedule-create">Записать на прием</a>
-					</form>
-				</div>
-			</div>
-			<div class="card-body">
-				<div class="table-responsive mailbox-messages scroll-reception">
-					{% include "inspection/reception/list.html" %}
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-4 b-none-w400">
-		<div class="card">
-			<div class="card-header">
-				<h3 class="card-title">Уведомления</h3>
-			</div>
-			<div class="card-body card-body-blear">
-				<div class="table-responsive scroll-bell">
-					{% for action in actions %}
-						<div class="d-flex align-items-center py-2 border-bottom">
-							<div class="icon-bagcground">
-								<i class="fa fa-calendar-check-o"></i>
-							</div>
-							<div class="ml-3">
-								<p class="mb-1 text-muted mb-0 tx-13"><span class="category-baner">{{action.verb}}</span>{{action.target.customer.name}}</p>
-								<p class="mb-1 text-muted">{{action.target.start_datetime|timesince }} назад</p>
-							</div>
-						</div>
-					{% endfor %}
-				</div> 
-			</div>
 
-		</div>
+<div class="row">
+	<div class="col-md-12 col-lg-12 col-xl-12 col-sm-12">
+
+    <div class="d-sm-flex mb-1 justify-content-between">
+      <div class="d-flex align-items-stretch">
+        <select id="id_mode" name="mode" class="form-control w-50">
+          <option value="daily" {% compare_set_class mode 'daily' 'selected' %}>Ежедневно</option>
+          <option value="weekly" {% compare_set_class mode 'weekly' 'selected' %}>Еженедельно</option>
+        </select>
+        {% get_week_by_date date as week %}
+        <input type="week" id="id_weekly" type="text" name="week" value="{{week}}"
+        class="form-control w-50 ml-2 {% compare_set_class mode 'weekly' '' 'd-none' %}" >
+        <input type="date" id="id_daily" type="text" name="date" value="{{date}}"
+        class="form-control w-50 ml-2 {% compare_set_class mode 'daily' '' 'd-none' %}">
+      </div>
+      <form class="form-header-card ml-lg-auto ml-sm-auto d-flex pt-md-0 justify-content-end">
+        <!--input type="text" class="form-control w-50" placeholder="Поиск"-->
+        <a href="#" class="btn btn-primary btn-form no-wrap ml-2 "  id="schedule-create">Записать на прием</a>
+      </form>
+    </div>
 	</div>
+  <div class="col-md-12 col-lg-12 col-xl-12 col-sm-12">
+	 {% include "inspection/reception/list.html" %}
+  </div>
 </div>
 {% endblock %}
 

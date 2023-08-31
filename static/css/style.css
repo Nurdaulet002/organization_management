@@ -771,9 +771,10 @@ table {
   background-color: #026AA7!important;
 }
 .navbar{
-  padding-top: 0px;
-  padding-bottom: 0px;
-  height: 55px;
+ /* padding-top: 0px;
+  padding-bottom: 0px;*/
+  /*height: 55px;*/
+  padding: 10px 0px;
 }
 .status{
   font-size: 14px;
@@ -874,7 +875,7 @@ li {
 .btn-default{
   background-color: white;
   border-radius: 0;
-  height: 37px;
+ /* height: 37px;*/
   border: 1px solid #ddd;
 }
 .float-right{
@@ -1306,3 +1307,46 @@ ul.jqtree-tree .jqtree-title {
 }
 
 
+
+.b-text {
+    font-weight: 600;
+    color: #31708f;
+    text-align: center;
+    background-color: #d9edf7;
+}
+.logo {
+    width: 161px;
+    margin: -5px 0px 0px 0px;
+}
+
+.border-bt {
+    border-bottom: 1px solid #ddd;
+}
+
+.bg-white .user-title{
+  color: red;
+  font-size: 14px;
+}
+.info-b {
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 500;
+    color: #7d708f;
+}
+.navbar-nav .dropdown-menu{
+  position: absolute;
+}
+.panel-heading {
+    padding: 7px 15px;
+}
+.panel-info>.panel-heading {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+.pasoent-fio {
+    font-size: 13px;
+    margin-left: 10px;
+    color: #11a114;
+    font-weight: 600;
+}
