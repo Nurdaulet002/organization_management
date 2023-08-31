@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.views.generic.base import View
 
-from .api.client import get_customer_by_iin
+from .api.client import get_customer_by_iin, get_customer_professional_examination_by_iin
 from .forms import CustomerForm
 from .models import Customer
 
@@ -36,9 +36,21 @@ class CustomerSearchView(LoginRequiredMixin, View):
 class CustomerApiSearchView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        data = get_customer_by_iin(request.GET.get('search_val'))
-        print(data, 'test...................................................')
-        return JsonResponse(data, safe=False)
+        search_val = request.GET.get('search_val')
+
+        # Call the first API
+        data1 = get_customer_by_iin(search_val)
+
+        # Call the second API (I'm just guessing the function name here)
+        data2 = get_customer_professional_examination_by_iin(search_val)
+
+        # Combine the data from both APIs (this depends on the structure of your data)
+        combined_data = {
+            'data1': data1,
+            'data2': data2,
+        }
+
+        return JsonResponse(combined_data, safe=False)
 
 
 # Обновить клиента
