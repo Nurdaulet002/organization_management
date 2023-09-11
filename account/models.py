@@ -111,7 +111,7 @@ class User(AbstractUser):
         choices=USER_TYPE_CHOICES, default=1)
     is_display_calendar = models.BooleanField(default=True)
     schedules = GenericRelation(Schedule, content_type_field='content_type', object_id_field='object_id')
-
+    doctor_code = models.CharField(max_length=10, verbose_name='Doctor Code', default='Doctor Code')
     # def save(self, *args, **kwargs):
     #    self.slug = slugify(self.username)
     #    super(User, self).save(*args, **kwargs)

@@ -1,16 +1,21 @@
 # views.py
+from rest_framework.generics import CreateAPIView
 from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from register.api.serializers import ScheduleCreateSerializer
 from .services import get_free_slots_for_specializations_in_date_range
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import authentication_classes, permission_classes
 
+from register.models import Schedule
 
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
 class FreeSlotsForSpecializationsInDateRangeView(APIView):
 
     def get(self, request):
@@ -30,4 +35,15 @@ class FreeSlotsForSpecializationsInDateRangeView(APIView):
         slots = get_free_slots_for_specializations_in_date_range(specializations, start_date, end_date)
         return Response(slots, status=status.HTTP_200_OK)
 
+class ScheduleCreateView(CreateAPIView):
+    queryset = Schedule.objects.all()
+    serializer_class = ScheduleCreateSerializer
+
+# class ScheduleCreateView(APIView):
+#     def post(self, request):
+#         doctor_code = request.data.get('doctor_code')
+#         start_datetime = request.data.get('start_datetime')
+#         customer_iin = request.data.get('customer_iin')
+#         print(doctor_code)
+#         return Response('test')
 

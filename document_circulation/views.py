@@ -12,10 +12,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from cashier.api.client import api_invoice_create
 from register.models import Schedule
-from internat_class_diseases.models import MKB10
 from customer.api.client import get_customer_by_iin
 from .models import Form, FormHistory, Marker, AdaptiveMarker,\
     ReadyPhrase, FuncStructureForm
+from internat_class_diseases.models import MKB10, Conclusion
 from .forms import ReadyPhraseForm
 from register.api.services import create_examination_result
 
@@ -43,6 +43,16 @@ class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
         data = result.json()
         print(data)
         self.appointments = data[0].get('Data', [])
+
+        url_customer_examination_result = 'http://{}/api/customer_personal_cabinet/customer/examination/result?insurance={}&iin={}'.format(api2_url, insurance, self.customer.iin)
+        result2 = requests.get(url_customer_examination_result, headers={
+            'Authorization': 'Token ' + api2_token})
+        result2.raise_for_status()
+        data2 = result2.json()
+        self.mkbs = MKB10.objects.all()
+        self.conclusions = Conclusion.objects.all()
+        print(data2, 'data2====')
+        self.results = data2[0].get('Data', [])
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -52,13 +62,33 @@ class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
         histories = FormHistory.objects.filter(
             customer=self.customer).order_by('-pk').all()
         insurances = get_customer_by_iin(self.customer.iin)
+
+        final_data = []
+
+        for appointment in self.appointments:
+            entry = {
+                'appointment': appointment,
+                'result_data': None
+            }
+
+            for result in self.results:
+                if result['examination_appointment'] == appointment['id']:
+                    entry['result_data'] = result
+                    break
+
+            final_data.append(entry)
+
         return self.render_to_response({
             'history': self.history,
             'customer': self.customer,
             'histories': histories,
             'schedule': self.schedule,
             'insurances': insurances,
-            'appointments': self.appointments
+            'appointments': self.appointments,
+            'results': self.results,
+            'mkbs': self.mkbs,
+            'final_data': final_data,
+            'conclusions': self.conclusions
         })
 
     def post(self, request, *args, **kwargs):
@@ -320,15 +350,17 @@ class AdminFormDetail(LoginRequiredMixin, TemplateResponseMixin, View):
 class CreateExaminationResultView(View):
 
     def post(self, request, *args, **kwargs):
-        examination_appointment = request.POST.get('examination_appointment')
-        icd = request.POST.get('icd')
-        conclusion = request.POST.get('conclusion')
+        examination_appointment = request.POST.get('examination_appointment_id')
+        icd_code = request.POST.get('icd')
+        conclusion_id = request.POST.get('conclusion')
         recommendations = request.POST.get('recommendations')
+        icd = MKB10.objects.get(code=icd_code)
+        conclusion = Conclusion.objects.get(id=conclusion_id)
         data = {
             'examination_appointment': examination_appointment,
-            'icd': icd,
-            'conclusion': conclusion,
+            'icd': icd.id,
+            'conclusion': conclusion.id,
             'recommendations': recommendations
         }
         examination_result = create_examination_result(data)
-        return JsonResponse({'success': True})
+        return redirect('document_circulation:form_in_history', pk=31)

@@ -83,23 +83,39 @@
                           </div>
                           <hr>
                       {% endfor %}
-                    {% for appointment in appointments %}
-                    <button type="button" class="collapsible">{{ appointment.service_title }}</button>
-                    <div class="content-examination">
-                        <form action="{% url 'document_circulation:examination_result_create' %}" method="post">
-                            {% csrf_token %}
-                            <label for=""><b>Услуга</b></label>:<br>
-                            <input type="text" name="examination_appointment" value="{{ appointment.service_title }}"><br>
-                            <label for=""><b>Код МКБ-10</b></label>:<br>
-                            <input type="text" name="icd" placeholder="..."><br>
-                            <label for=""><b>Заключение</b></label>:<br>
-                            <input type="text" name="conclusion" placeholder=""><br>
-                            <label for=""><b>Рекомендация</b></label>:<br>
-                            <input type="text" name="recommendations" placeholder=""><br>
-                            <input type="submit" value="Сохранить">
-                            </form>
-                    </div>
-                    {% endfor %}
+                      {% for entry in final_data %}
+    <button type="button" class="collapsible">{{ entry.appointment.service_title }} {% if entry.result_data %}<span style="color:#8fff8f">[Выполнено]</span>{% endif %}</button>
+    <div class="content-examination">
+        <form action="{% url 'document_circulation:examination_result_create' %}" method="post">
+            {% csrf_token %}
+            <label for=""><b>Услуга</b></label>:<br>
+            <input type="text" name="examination_appointment" value="{{ entry.appointment.service_title }}"><br>
+
+            <label for=""><b>Код МКБ-10</b></label>:<br>
+            <select name="icd" class="selectize-input-search">
+                <option value="">Выберите код МКБ-10</option>
+                {% for mkb in mkbs %}
+                <option value="{{mkb.code}}" {% if entry.result_data and entry.result_data.icd == mkb.id %}selected{% endif %}>{{mkb.code}}</option>
+                {% endfor %}
+            </select>
+
+            <label for=""><b>Заключение</b></label>:<br>
+            <select name="conclusion" class="selectize-input-search">
+                <option value="">Выберите заключение</option>
+                {% for conclusion in conclusions %}
+                <option value="{{conclusion.id}}" {% if entry.result_data and entry.result_data.conclusion == conclusion.id %}selected{% endif %}>{{conclusion.title}}</option>
+                {% endfor %}
+            </select>
+
+            <label for=""><b>Рекомендация</b></label>:<br>
+            <input type="text" name="recommendations" value="{% if entry.result_data %}{{ entry.result_data.recommendations }}{% endif %}">
+
+            <input type="hidden" name="examination_appointment_id" value="{{ entry.appointment.id }}">
+            <input type="submit" value="Сохранить" {% if entry.result_data %}disabled{% endif %}>
+        </form>
+    </div>
+{% endfor %}
+
                   </div>
               {% endif %}
               </div>
@@ -684,6 +700,8 @@ for (i = 0; i < coll.length; i++) {
     }
   });
 }
-  
+
+
+$('.selectize-input-search').selectize({});
 
 {% endblock %}

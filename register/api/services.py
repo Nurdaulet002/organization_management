@@ -51,12 +51,14 @@ def get_free_slots_for_specializations_in_date_range(specializations, start_date
         for doctor in doctors:
             slots = get_free_slots(doctor, current_date)
             if slots:
-                speciality = doctor.speciality.id
+                # speciality = doctor.speciality.id
+                speciality = doctor.speciality.title
                 if speciality not in result:
                     result[speciality] = {}
                 if doctor.id not in result[speciality]:
-                    result[speciality][doctor.id] = {}
-                result[speciality][doctor.id][str(current_date)] = slots
+                    # result[speciality][doctor.id] = {}
+                    result[speciality][doctor.doctor_code] = {}
+                result[speciality][doctor.doctor_code][str(current_date)] = slots
 
         current_date += timedelta(days=1)
 

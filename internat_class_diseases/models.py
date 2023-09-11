@@ -3,6 +3,12 @@ from django.db.models import Q
 from mptt.models import MPTTModel, TreeForeignKey
 
 
+class Conclusion(models.Model):
+    title = models.CharField(max_length=240)
+
+    def __str__(self):
+        return self.title
+
 # МКБ-10
 class MKB10(MPTTModel):
     title = models.CharField(max_length=240)
