@@ -2,44 +2,11 @@
 {% load widget_tweaks %}
 {% load form_tags %}
 {% block content %}
-<style>
-.collapsible {
-  cursor: pointer;
-}
-
-/*.collapsible {
-  background-color: #777;
-  color: white;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  border: none;
-  text-align: left;
-  outline: none;
-  font-size: 15px;
-}
-
-.active-div, .collapsible:hover {
-  background-color: #555;
-}
-*/
-.content-examination {
-  padding: 9px 9px;
-  display: none;
-  overflow: hidden;
-  background-color:#ffff0038;
-  display: block;
-    color: #140552;
-    font-size: 13px;
-    cursor: pointer;
-}
-</style>
-
-<div class="az-dashboard-nav az-dashboard-nav-breadcrumbs">
+<div class="az-dashboard-nav az-dashboard-nav-breadcrumbs"> 
   <nav class="nav">
-    <a href="{% url 'inspection:reception_with_action_list' %}" class="nav-link">Пациенты</a>
+    <a href="{% url 'inspection:reception_with_action_list' %}" class="nav-link active">Пациенты</a>
     <span>/</span>
-    <a class="nav-link"  href="#" style="color: red">Медицинские записи</a>
+    <a class="nav-link"  href="#" style="color: #657085">Медицинские записи</a>
   </nav>
   <nav class="nav">
     <!-- <a id="schedule-create" data-customer="" class="nav-link" href="#">
@@ -49,6 +16,69 @@
 
 </div>
 <div class="row">
+  <div class="col-md-12 mb-3">
+    <div class="card panel-info">
+      <div class="card-header panel-heading">
+        <div class="btn-group">
+          <a type="button" class="iconfa btn btn-sm btn-default btn-xs collapsed" data-bs-toggle="collapse" data-parent="#accordion" href="#collapsPasient" aria-expanded="false">
+              <span class="fa fa-chevron-down"></span>
+          </a>
+        </div>&nbsp;&nbsp;
+        <b>Информация о пациенте</b>
+        <span class="pasoent-fio">{{ customer }} </span>
+        <span class="">
+          <button id="start_priem" data-id="546097" class="doctor_forms_modal btn btn-sm btn-xs btn-success" data-toggle="modal" data-target=".bs-example-modal-forma">Начать прием</button>
+          <button id="end_priem" data-id="546097" class="btn btn-xs btn-sm btn-danger">Завершить прием</button>
+        </span>
+        <span class="pull-right">
+          <button id="start_priem" id="setting-ready-phrase"  class=" btn btn-sm btn-default get-forms" >Открытие/настройка форм</button>
+        </span>
+      </div>
+      <div class="collapse" id="collapsPasient">
+        <div class="card-body">
+          <table class="table-condensed w-100 table-fio">
+            <tbody>
+              <tr>
+                <td><span class="info-b">Дата рождения:</span>{{ customer.date_birth }}</td>
+                <td><span class="info-b">Пол:</span>{{ customer.get_gender_display |default_if_none:"---" }}</td>
+                <td><span class="info-b">ИИН:</span>2804DH5 </td>
+              </tr> 
+              {% if insurances %} 
+                <tr>
+                  <td colspan="3">
+                    <h6>Страховые карты клиента</h6>
+                  </td>
+                </tr>
+                {% for insurance in insurances.customer_insurance %}
+                <tr>
+                  <td><span class="info-b">Номер карты: </span>{{ insurance.card_number }}</td>
+                  <td><span class="info-b">Программа </span>{{ insurance.program }}</td>
+                  <td><span class="info-b">Страховщик:</span> {{ insurance.insurance }}</td>
+                </tr>  
+                <tr>
+                  <td><span class="info-b">Дата начала:</span> {{ insurance.begin_date }}</td>
+                  <td><span class="info-b"> Дата окончания: </span>{{ insurance.end_date }}</td>
+                  <td><span class="info-b"></span></td>
+                </tr> 
+                {% endfor %}
+              {% endif %}                          
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card panel-info">
+      <div class="card-header panel-heading">
+        <b>История болезни </b>
+      </div>
+      <div class="card-body">
+        {% include "document_circulation/history/list.html" %}
+      </div>
+    </div>
+  </div>
     <input type="hidden" id="id_active_marker" value="{{ marker }}">
     <div class="col-md-12 col-lg-8 col-xl-8 col-sm-12">
       {% if history %}
@@ -91,39 +121,6 @@
                           </div>
                           <hr>
                       {% endfor %}
-                      {% for entry in final_data %}
-    <button type="button" class="collapsible">{{ entry.appointment.service_title }} {% if entry.result_data %}<span style="color:#8fff8f">[Выполнено]</span>{% endif %}</button>
-    <div class="content-examination">
-        <form action="{% url 'document_circulation:examination_result_create' %}" method="post">
-            {% csrf_token %}
-            <label for=""><b>Услуга</b></label>:<br>
-            <input type="text" name="examination_appointment" value="{{ entry.appointment.service_title }}"><br>
-
-            <label for=""><b>Код МКБ-10</b></label>:<br>
-            <select name="icd" class="selectize-input-search">
-                <option value="">Выберите код МКБ-10</option>
-                {% for mkb in mkbs %}
-                <option value="{{mkb.code}}" {% if entry.result_data and entry.result_data.icd == mkb.id %}selected{% endif %}>{{mkb.code}}</option>
-                {% endfor %}
-            </select>
-
-            <label for=""><b>Заключение</b></label>:<br>
-            <select name="conclusion" class="selectize-input-search">
-                <option value="">Выберите заключение</option>
-                {% for conclusion in conclusions %}
-                <option value="{{conclusion.id}}" {% if entry.result_data and entry.result_data.conclusion == conclusion.id %}selected{% endif %}>{{conclusion.title}}</option>
-                {% endfor %}
-            </select>
-
-            <label for=""><b>Рекомендация</b></label>:<br>
-            <input type="text" name="recommendations" value="{% if entry.result_data %}{{ entry.result_data.recommendations }}{% endif %}">
-
-            <input type="hidden" name="examination_appointment_id" value="{{ entry.appointment.id }}">
-            <input type="submit" value="Сохранить" {% if entry.result_data %}disabled{% endif %}>
-        </form>
-    </div>
-{% endfor %}
-
                   </div>
               {% endif %}
               </div>
@@ -145,148 +142,28 @@
           </div>
         </div>
         <div class="card-body p-0">
-<!--          <div class="tab-content" id="pills-tabContent">-->
-<!--            <div class="tab-pane fade show active" id="content-history" role="tabpanel" aria-labelledby="content-history-tab">-->
-<!--              <div class="disease-history">-->
-<!--                {% include "document_circulation/history/list.html" %}-->
-<!--                <button type="button" class="get-forms btn btn-success btn-sm btn-new-crete">+ Cоздать новую запись</button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="tab-pane fade" id="content-ready-phrase" role="tabpanel" aria-labelledby="content-ready-phrase-tab">-->
-<!--              <div class="disease-history">-->
-<!--                <div class="input-group mb-2 mt-2">-->
-<!--                  <input type="text" class="form-control" id="ready-phrase-search" placeholder="..." aria-label="Recipient's username" aria-describedby="button-addon2">-->
-<!--                  <button class="btn btn-primary" type="button" id="ready-phrase-button">Поиск шаблона</button>-->
-<!--                </div>-->
-<!--                <div id="tree-content" class="ready_phrase" data-url="' + url + '" data-schedule="{{ schedule.id }}"></div>-->
-<!--                <button type="button" id="setting-ready-phrase" class="btn btn-primary btn-sm btn-new-crete">Настроить готовый шаблон</button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-
-  <div class="col-md-12 mb-3">
-    <div class="card panel-info">
-      <div class="card-header panel-heading">
-        <div class="btn-group">
-          <a type="button" class="iconfa btn btn-sm btn-default btn-xs collapsed" data-bs-toggle="collapse" data-parent="#accordion" href="#collapsPasient" aria-expanded="false">
-              <span class="fa fa-chevron-down"></span>
-          </a>
-        </div>&nbsp;&nbsp;
-        <b>Информация о пациенте</b>
-        <span class="pasoent-fio">{{ customer }} </span>
-<!--        <span class="">-->
-<!--          <button id="start_priem" data-id="546097" class="doctor_forms_modal btn btn-sm btn-xs btn-success" data-toggle="modal" data-target=".bs-example-modal-forma">Начать прием</button>-->
-<!--          <button id="end_priem" data-id="546097" class="btn btn-xs btn-sm btn-danger">Завершить прием</button>-->
-<!--        </span>-->
-<!--        <span class="pull-right">-->
-<!--          <button id="start_priem" id="setting-ready-phrase"  class=" btn btn-sm btn-default get-forms" >Открытие/настройка форм</button>-->
-<!--        </span>-->
-      </div>
-      <div class="collapse" id="collapsPasient">
-        <div class="card-body ">
-          <table class="table-condensed w-100 table-fio">
-            <tbody>
-              <tr>
-                <td><span class="info-b">Дата рождения:</span>{{ customer.date_birth }}</td>
-                <td><span class="info-b">Пол:</span>{{ customer.get_gender_display |default_if_none:"---" }}</td>
-                <td><span class="info-b">ИИН:</span>2804DH5 </td>
-              </tr> 
-              {% if insurances %} 
-                <tr>
-                  <td colspan="3">
-                    <h6>Страховые карты клиента</h6>
-                  </td>
-                </tr>
-                {% for insurance in insurances.customer_insurance %}
-                <tr>
-                  <td><span class="info-b">Номер карты: </span>{{ insurance.card_number }}</td>
-                  <td><span class="info-b">Программа </span>{{ insurance.program }}</td>
-                  <td><span class="info-b">Страховщик:</span> {{ insurance.insurance }}</td>
-                </tr>  
-                <tr>
-                  <td><span class="info-b">Дата начала:</span> {{ insurance.begin_date }}</td>
-                  <td><span class="info-b"> Дата окончания: </span>{{ insurance.end_date }}</td>
-                  <td><span class="info-b"></span></td>
-                </tr> 
-                {% endfor %}
-              {% endif %}                          
-            </tbody>
-          </table>
+          <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="content-history" role="tabpanel" aria-labelledby="content-history-tab">
+              <div class="disease-history">
+                {% include "document_circulation/history/list.html" %}
+                <button type="button" class="get-forms btn btn-success btn-sm btn-new-crete">+ Cоздать новую запись</button>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="content-ready-phrase" role="tabpanel" aria-labelledby="content-ready-phrase-tab">
+              <div class="disease-history">
+                <div class="input-group mb-2 mt-2">
+                  <input type="text" class="form-control" id="ready-phrase-search" placeholder="..." aria-label="Recipient's username" aria-describedby="button-addon2">
+                  <button class="btn btn-primary" type="button" id="ready-phrase-button">Поиск шаблона</button>
+                </div>
+                <div id="tree-content" class="ready_phrase" data-url="' + url + '" data-schedule="{{ schedule.id }}"></div>
+                <button type="button" id="setting-ready-phrase" class="btn btn-primary btn-sm btn-new-crete">Настроить готовый шаблон</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="col-md-6">
-    <div class="card panel-info">
-      <div class="card-header panel-heading" style="height:41px;">
-        <b>История болезни </b>
-      </div>
-      <div class="card-body scroll p-body-2">
-        {% include "document_circulation/history/list.html" %}
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="card panel-info">
-      <div class="card-header panel-heading" style="height:41px;">
-        <b>Счет реестер/Оплата услуг</b>
-      </div>
-      <div class="card-body scroll p-body-2">
-        <table class="table table-condensed table-bottom" style="font-size: 13px;">
-          <tbody id="history-search-content">
-            {% for appointment in appointments %}
-            <tr>
-              <td class="td-hover">
-                <div class="" style="cursor:pointer;" data-bs-toggle="collapse" data-parent="#accordion" href="#collapse{{appointment.id}}" aria-expanded="false">
-                  <span style="font-size: 14px;">{{ appointment.service_title }}<span class="directed">[По страховке]</span>&nbsp&nbsp<span class="over" id="status_54015">[Выполнен]</span>&nbsp&nbsp<span class="directed">[ОПМО]</span>&nbsp&nbsp<span class="over">[Оплачено]</span></span>
-                </div>
-              </td>
-            </tr>
-            <tr class="collapse" id="collapse{{appointment.id}}">
-              <td class="p-0">
-                <div class="content-examination">
-                  <form action="{% url 'document_circulation:examination_result_create' %}" method="post">
-                    {% csrf_token %}
-                    <div class="row">
-                      <div class="col-md-6">
-                        <label for=""><b>Услуга</b></label>
-                        <input type="text" class="form-control" name="examination_appointment" value="{{ appointment.service_title }}">
-                      </div>
-                      <div class="col-md-6">
-                        <label for=""><b>Код МКБ-10</b></label>
-                        <input type="text" class="form-control" name="icd" placeholder="...">
-                      </div>
-                      <div class="col-md-6">
-                        <label for=""><b>Заключение</b></label>
-                        <input type="text" class="form-control" name="conclusion" placeholder="">
-                      </div>
-                      <div class="col-md-6">
-                        <label for=""><b>Рекомендация</b></label>
-                        <input type="text" class="form-control" name="recommendations" placeholder="">
-                      </div>
-                      <div class="col-md-12 mt-2">
-                        <div class="pull-right forma_reg">
-                          <button type="submit" class="btn btn btn-success btn-sm save_nap_strah" >Сохранить</button>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-  
-        
-      </div>
-    </div>
-  </div>
 </div>
-</div>
-{% endif %}
-    
 {% endblock %}
 
 
@@ -813,23 +690,6 @@
         }
       })
   })
-
-var coll = document.getElementsByClassName("collapsible");
-var i;
-
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var content = this.nextElementSibling;
-    if (content.style.display === "block") {
-      content.style.display = "none";
-    } else {
-      content.style.display = "block";
-    }
-  });
-}
-
-
-$('.selectize-input-search').selectize({});
+  
 
 {% endblock %}
