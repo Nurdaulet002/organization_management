@@ -23,7 +23,7 @@ def api_invoice_create(service, performing_doctor, type_appeal, place, customer_
         'screen_title': screen_title,
 
     }
-    print(data)
+
     result = requests.post(url_api, data=data, headers={
         'Authorization': 'Token ' + api_token}, timeout=1)
     result.raise_for_status()

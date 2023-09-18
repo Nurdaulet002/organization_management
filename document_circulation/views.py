@@ -41,7 +41,6 @@ class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
             'Authorization': 'Token ' + api2_token})
         result.raise_for_status()
         data = result.json()
-        print(data)
         self.appointments = data[0].get('Data', [])
 
         url_customer_examination_result = 'http://{}/api/customer_personal_cabinet/customer/examination/result?insurance={}&iin={}'.format(api2_url, insurance, self.customer.iin)
@@ -51,8 +50,15 @@ class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
         data2 = result2.json()
         self.mkbs = MKB10.objects.all()
         self.conclusions = Conclusion.objects.all()
-        print(data2, 'data2====')
         self.results = data2[0].get('Data', [])
+
+        url_package_list_api = 'http://{}/api/customer_personal_cabinet/api/package?insurance={}&iin={}'.format(
+            api2_url, insurance, self.customer.iin)
+        result3 = requests.get(url_package_list_api, headers={
+            'Authorization': 'Token ' + api2_token})
+        result3.raise_for_status()
+        data_package = result3.json()
+        self.packages = data_package[0].get('Data', [])
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -62,7 +68,6 @@ class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
         histories = FormHistory.objects.filter(
             customer=self.customer).order_by('-pk').all()
         insurances = get_customer_by_iin(self.customer.iin)
-
         final_data = []
 
         for appointment in self.appointments:
@@ -88,7 +93,8 @@ class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
             'results': self.results,
             'mkbs': self.mkbs,
             'final_data': final_data,
-            'conclusions': self.conclusions
+            'conclusions': self.conclusions,
+            'packages': self.packages
         })
 
     def post(self, request, *args, **kwargs):
@@ -257,7 +263,6 @@ class ReadyPhraseJsonView(LoginRequiredMixin, View):
                     data = ReadyPhrase.get_as_json(marker, parent)
                 else:
                     data = ReadyPhrase.get_as_json(marker, None)
-                print(data)
         return JsonResponse(data, safe=False)
 
 

@@ -242,6 +242,11 @@
           <button type="button" id="setting-ready-phrase" class="btn btn-primary btn-sm btn-new-crete">Настроить готовый шаблон</button>
         </div>
       </div>
+      <div class="card-body ">
+        {% for package in packages %}
+          {{package.title}}<br>
+        {% endfor %}
+      </div>
     </div>
   </div>
 </div>

@@ -48,122 +48,16 @@
   </nav>
 
 </div>
+<input type="hidden" id="id_active_marker" value="{{ marker }}">
+{% if history %}
+  {% is_pdf history as is_pdf %}
+  {% if not is_pdf %}
+    {% include "document_circulation/form/form.html" %}
+  {% else %}
+    {% include "document_circulation/history/detail.html" %}
+  {% endif %}
+{% else %}
 <div class="row">
-    <input type="hidden" id="id_active_marker" value="{{ marker }}">
-    <div class="col-md-12 col-lg-8 col-xl-8 col-sm-12">
-      {% if history %}
-        {% is_pdf history as is_pdf %}
-        {% if not is_pdf %}
-          {% include "document_circulation/form/form.html" %}
-        {% else %}
-          {% include "document_circulation/history/detail.html" %}
-        {% endif %}
-      {% else %}
-        <div class="card card-dashboard-one ">
-          <div class="card-body">
-            <div class="mailbox-messages">
-              <div class="">
-                <div class="mb-2"><b>Клиент:</b> {{ customer }}</div>
-                <div class="mb-2"><b>Дата рождения:</b> {{ customer.date_birth }} </div>
-                  <div class="mb-2"><b>Пол:</b> {{ customer.get_gender_display |default_if_none:"---" }} </div>
-              </div>
-              <div>
-              {% if insurances %}
-                  <div class="mt-4">
-                      <h5 class="mb-3">Страховые карты клиента</h5>
-                      {% for insurance in insurances.customer_insurance %}
-                          <div class="row">
-                              <div class="col-md-2">
-                                  Номер карты: {{ insurance.card_number }}
-                              </div>
-                              <div class="col-md-2">
-                                  Программа {{ insurance.program }}
-                              </div>
-                              <div class="col-md-2">
-                                  Страховщик: {{ insurance.insurance }}
-                              </div>
-                              <div class="col-md-2">
-                                  Дата начала: {{ insurance.begin_date }}
-                              </div>
-                              <div class="col-md-2">
-                                  Дата окончания: {{ insurance.end_date }}
-                              </div>
-                          </div>
-                          <hr>
-                      {% endfor %}
-                      {% for entry in final_data %}
-    <button type="button" class="collapsible">{{ entry.appointment.service_title }} {% if entry.result_data %}<span style="color:#8fff8f">[Выполнено]</span>{% endif %}</button>
-    <div class="content-examination">
-        <form action="{% url 'document_circulation:examination_result_create' %}" method="post">
-            {% csrf_token %}
-            <label for=""><b>Услуга</b></label>:<br>
-            <input type="text" name="examination_appointment" value="{{ entry.appointment.service_title }}"><br>
-
-            <label for=""><b>Код МКБ-10</b></label>:<br>
-            <select name="icd" class="selectize-input-search">
-                <option value="">Выберите код МКБ-10</option>
-                {% for mkb in mkbs %}
-                <option value="{{mkb.code}}" {% if entry.result_data and entry.result_data.icd == mkb.id %}selected{% endif %}>{{mkb.code}}</option>
-                {% endfor %}
-            </select>
-
-            <label for=""><b>Заключение</b></label>:<br>
-            <select name="conclusion" class="selectize-input-search">
-                <option value="">Выберите заключение</option>
-                {% for conclusion in conclusions %}
-                <option value="{{conclusion.id}}" {% if entry.result_data and entry.result_data.conclusion == conclusion.id %}selected{% endif %}>{{conclusion.title}}</option>
-                {% endfor %}
-            </select>
-
-            <label for=""><b>Рекомендация</b></label>:<br>
-            <input type="text" name="recommendations" value="{% if entry.result_data %}{{ entry.result_data.recommendations }}{% endif %}">
-
-            <input type="hidden" name="examination_appointment_id" value="{{ entry.appointment.id }}">
-            <input type="submit" value="Сохранить" {% if entry.result_data %}disabled{% endif %}>
-        </form>
-    </div>
-{% endfor %}
-
-                  </div>
-              {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-      {% endif %}
-    </div>
-    <div class="col-lg-4 right-block">
-      <div class="card card-dashboard-one " id="fixed-sidbar">
-        <div class="">
-          <div class="az-dashboard-nav az-dashboard-nav-forma"> 
-            <nav class="nav  nav-pills">
-              <a class="nav-link  nav-link-history active" href="#" id="content-history-tab" data-bs-toggle="pill" data-bs-target="#content-history" type="button" role="tab" aria-controls="content-history" aria-selected="true">История болезни</a>
-
-              <a class="nav-link  nav-link-history" href="#"  id="content-ready-phrase-tab" data-bs-toggle="pill" data-bs-target="#content-ready-phrase" type="button" role="tab"
-                aria-controls="content-ready-phrase" aria-selected="false" disabled> Готовые шаблоны</a>
-            </nav>
-          </div>
-        </div>
-        <div class="card-body p-0">
-<!--          <div class="tab-content" id="pills-tabContent">-->
-<!--            <div class="tab-pane fade show active" id="content-history" role="tabpanel" aria-labelledby="content-history-tab">-->
-<!--              <div class="disease-history">-->
-<!--                {% include "document_circulation/history/list.html" %}-->
-<!--                <button type="button" class="get-forms btn btn-success btn-sm btn-new-crete">+ Cоздать новую запись</button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="tab-pane fade" id="content-ready-phrase" role="tabpanel" aria-labelledby="content-ready-phrase-tab">-->
-<!--              <div class="disease-history">-->
-<!--                <div class="input-group mb-2 mt-2">-->
-<!--                  <input type="text" class="form-control" id="ready-phrase-search" placeholder="..." aria-label="Recipient's username" aria-describedby="button-addon2">-->
-<!--                  <button class="btn btn-primary" type="button" id="ready-phrase-button">Поиск шаблона</button>-->
-<!--                </div>-->
-<!--                <div id="tree-content" class="ready_phrase" data-url="' + url + '" data-schedule="{{ schedule.id }}"></div>-->
-<!--                <button type="button" id="setting-ready-phrase" class="btn btn-primary btn-sm btn-new-crete">Настроить готовый шаблон</button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-
   <div class="col-md-12 mb-3">
     <div class="card panel-info">
       <div class="card-header panel-heading">
@@ -174,13 +68,13 @@
         </div>&nbsp;&nbsp;
         <b>Информация о пациенте</b>
         <span class="pasoent-fio">{{ customer }} </span>
-<!--        <span class="">-->
-<!--          <button id="start_priem" data-id="546097" class="doctor_forms_modal btn btn-sm btn-xs btn-success" data-toggle="modal" data-target=".bs-example-modal-forma">Начать прием</button>-->
-<!--          <button id="end_priem" data-id="546097" class="btn btn-xs btn-sm btn-danger">Завершить прием</button>-->
-<!--        </span>-->
-<!--        <span class="pull-right">-->
-<!--          <button id="start_priem" id="setting-ready-phrase"  class=" btn btn-sm btn-default get-forms" >Открытие/настройка форм</button>-->
-<!--        </span>-->
+        <span class="">
+          <button id="start_priem" data-id="546097" class="doctor_forms_modal btn btn-sm btn-xs btn-success" data-toggle="modal" data-target=".bs-example-modal-forma">Начать прием</button>
+          <button id="end_priem" data-id="546097" class="btn btn-xs btn-sm btn-danger">Завершить прием</button>
+        </span>
+        <span class="pull-right">
+          <button id="start_priem" id="setting-ready-phrase"  class=" btn btn-sm btn-default get-forms" >Открытие/настройка форм</button>
+        </span>
       </div>
       <div class="collapse" id="collapsPasient">
         <div class="card-body ">
@@ -190,8 +84,8 @@
                 <td><span class="info-b">Дата рождения:</span>{{ customer.date_birth }}</td>
                 <td><span class="info-b">Пол:</span>{{ customer.get_gender_display |default_if_none:"---" }}</td>
                 <td><span class="info-b">ИИН:</span>2804DH5 </td>
-              </tr> 
-              {% if insurances %} 
+              </tr>
+              {% if insurances %}
                 <tr>
                   <td colspan="3">
                     <h6>Страховые карты клиента</h6>
@@ -202,14 +96,14 @@
                   <td><span class="info-b">Номер карты: </span>{{ insurance.card_number }}</td>
                   <td><span class="info-b">Программа </span>{{ insurance.program }}</td>
                   <td><span class="info-b">Страховщик:</span> {{ insurance.insurance }}</td>
-                </tr>  
+                </tr>
                 <tr>
                   <td><span class="info-b">Дата начала:</span> {{ insurance.begin_date }}</td>
                   <td><span class="info-b"> Дата окончания: </span>{{ insurance.end_date }}</td>
                   <td><span class="info-b"></span></td>
-                </tr> 
+                </tr>
                 {% endfor %}
-              {% endif %}                          
+              {% endif %}
             </tbody>
           </table>
         </div>
@@ -235,11 +129,11 @@
       <div class="card-body scroll p-body-2">
         <table class="table table-condensed table-bottom" style="font-size: 13px;">
           <tbody id="history-search-content">
-            {% for appointment in appointments %}
+            {% for entry in final_data %}
             <tr>
               <td class="td-hover">
                 <div class="" style="cursor:pointer;" data-bs-toggle="collapse" data-parent="#accordion" href="#collapse{{appointment.id}}" aria-expanded="false">
-                  <span style="font-size: 14px;">{{ appointment.service_title }}<span class="directed">[По страховке]</span>&nbsp&nbsp<span class="over" id="status_54015">[Выполнен]</span>&nbsp&nbsp<span class="directed">[ОПМО]</span>&nbsp&nbsp<span class="over">[Оплачено]</span></span>
+                  <span style="font-size: 14px;">{{ entry.appointment.service_title }} {% if entry.result_data %}<span class="over" id="status_54015">[Выполнен]</span>{% else %}<span class="directed">[По страховке]</span>&nbsp&nbsp<span class="over" id="status_54015">[Выполнен]</span>&nbsp&nbsp<span class="directed">[ОПМО]</span>&nbsp&nbsp<span class="over">[Оплачено]</span>{% endif %}</span>
                 </div>
               </td>
             </tr>
@@ -251,23 +145,34 @@
                     <div class="row">
                       <div class="col-md-6">
                         <label for=""><b>Услуга</b></label>
-                        <input type="text" class="form-control" name="examination_appointment" value="{{ appointment.service_title }}">
+                        <input type="text" class="form-control" name="examination_appointment" value="{{ entry.appointment.service_title }}">
                       </div>
                       <div class="col-md-6">
                         <label for=""><b>Код МКБ-10</b></label>
-                        <input type="text" class="form-control" name="icd" placeholder="...">
+                          <select name="icd" class="selectize-input-search">
+                            <option value="">Выберите код МКБ-10</option>
+                            {% for mkb in mkbs %}
+                            <option value="{{mkb.code}}" {% if entry.result_data and entry.result_data.icd == mkb.id %}selected{% endif %}>{{mkb.code}}</option>
+                            {% endfor %}
+                          </select>
                       </div>
                       <div class="col-md-6">
                         <label for=""><b>Заключение</b></label>
-                        <input type="text" class="form-control" name="conclusion" placeholder="">
+                        <select name="conclusion" class="selectize-input-search">
+                            <option value="">Выберите заключение</option>
+                            {% for conclusion in conclusions %}
+                            <option value="{{conclusion.id}}" {% if entry.result_data and entry.result_data.conclusion == conclusion.id %}selected{% endif %}>{{conclusion.title}}</option>
+                            {% endfor %}
+                        </select>
                       </div>
                       <div class="col-md-6">
                         <label for=""><b>Рекомендация</b></label>
-                        <input type="text" class="form-control" name="recommendations" placeholder="">
+                        <input type="text" name="recommendations" class="form-control" value="{% if entry.result_data %}{{ entry.result_data.recommendations }}{% endif %}">
                       </div>
                       <div class="col-md-12 mt-2">
                         <div class="pull-right forma_reg">
-                          <button type="submit" class="btn btn btn-success btn-sm save_nap_strah" >Сохранить</button>
+                            <input type="hidden" name="examination_appointment_id" value="{{ entry.appointment.id }}">
+                          <button type="submit" class="btn btn btn-success btn-sm save_nap_strah" {% if entry.result_data %}disabled{% endif %}>Сохранить</button>
                         </div>
                       </div>
                     </div>
@@ -278,15 +183,14 @@
             {% endfor %}
           </tbody>
         </table>
-  
-        
+
+
       </div>
     </div>
   </div>
 </div>
-</div>
 {% endif %}
-    
+
 {% endblock %}
 
 
@@ -299,7 +203,7 @@
           <h5 class="modal-title">Modal title</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        
+
       </div>
     </div>
   </div>
@@ -341,7 +245,7 @@
         get_phrase_marker(marker)
         localStorage.setItem('selected_marker', marker)
       }
-      
+
   })
 
   $(document).on("focus",".fixed-ready_phrase",function() {
@@ -352,7 +256,7 @@
       get_phrase_marker(marker)
       localStorage.setItem('selected_marker', marker)
     }
-    
+
   })
   $(document).on('click', '#ready-phrase-button', function (e) {
     $('#tree-content').tree('destroy')
@@ -410,9 +314,9 @@
     event.preventDefault()
     var url = $(this).data('url')
       var form = $("<form action='" + url + "' method='post' style='display: none'>" +
-        '{% csrf_token %}' + 
+        '{% csrf_token %}' +
         "<input type='hidden' name='status' value='3' />" +
-        "<input type='submit' />" + 
+        "<input type='submit' />" +
         "</form>").appendTo('body')
     form.submit()
   })
@@ -423,14 +327,14 @@
       var id = $(this).data('id')
       var url = "{% url 'document_circulation:history_delete' pk=0 %}".replace('0', id)
       var form = $("<form action='" + url + "' method='post' style='display: none'>" +
-          '{% csrf_token %}' + 
+          '{% csrf_token %}' +
           "<input type='hidden' name='schedule' value='{{schedule.id}}' />" +
-          "<input type='submit' />" + 
+          "<input type='submit' />" +
           "</form>").appendTo('body')
       form.submit()
     }
   })
-  
+
   // Связанные формы настроить
   $(document).on('click', '.form-relation-modal', function (e) {
     var next_page = "{{ request.path }}"
@@ -515,7 +419,7 @@
           if(save_history){
             $('#consumable_appointed_service_form').attr('data-save_history', true)
           }
-          
+
         }
     })
   }
@@ -536,7 +440,7 @@
             $(this).prop("disabled", true)
             $('#universal-modal').modal('hide')
         });
-        
+
       },
       error: function (data) {
       },
@@ -557,9 +461,9 @@
     get_consumable_appointed_service(true)
   })
 
-  
 
-  
+
+
 
   // Расчитать расходной материал
   $(document).on('change', 'input[name = "schedule_service"]', function(){
@@ -589,7 +493,7 @@
                   $(consumable_content_id).addClass(schedule_service_class)
                 }
                 else{
-                  html = 
+                  html =
                       `<tr id="consumable-` + storage_id + `-` + good_id + `" class="` + schedule_service_class + `">
                       <td>`+ good_title + `
                         <input type="hidden" name="good" value="` + good_id + `">
@@ -616,7 +520,7 @@
         var receipt_amount_elem = $(this).find('[name = "receipt_amount"]')
           var receipt_amount = receipt_amount_elem.attr(data_consumable)
           $(this).removeClass(schedule_service_class)
-          if ($(this).is('[class*="schedule_service_"]')){ 
+          if ($(this).is('[class*="schedule_service_"]')){
             var receipt_amount_res = parseInt(receipt_amount_elem.val()) - parseInt(receipt_amount)
             receipt_amount_elem.val(receipt_amount_res).attr(data_consumable, '')
           }
@@ -631,7 +535,7 @@
   $(document).on('click', '#consumable-add', function(){
     event.preventDefault()
     index += 1
-    html = 
+    html =
         `<tr>
         <td>
           <select id="id_good`+ index +`" name="good" required>
@@ -675,7 +579,7 @@
         }
     })
   })
-  
+
 
   $(document).on('dblclick', '.get-phrase', function(){
     var phrase = ' ' + $(this).html()
@@ -714,7 +618,7 @@
     $('#modal-content').html(setting_html)
     $('#universal-modal').modal('show')
   }
-  
+
   $(document).on('click', '#setting-ready-phrase', function(){
     var marker = $('#id_active_marker').val()
     show_setting_modal()
@@ -796,8 +700,8 @@
     $('#ready_phrase-additional-content').html('')
   })
 
-   
-  
+
+
 
   // Сохранить готовый шаблон
   $(document).on('submit', '#form-ready-phrase', function(){
@@ -829,7 +733,7 @@ for (i = 0; i < coll.length; i++) {
   });
 }
 
-
 $('.selectize-input-search').selectize({});
+
 
 {% endblock %}
