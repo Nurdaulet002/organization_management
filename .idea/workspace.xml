@@ -4,7 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1fc1447f-3f0b-4397-a220-b53713d05d5b" name="Changes" comment="" />
+    <list default="true" id="1fc1447f-3f0b-4397-a220-b53713d05d5b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/.idea/organization_management.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/account/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/organization_management/account/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/cashier/api/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/organization_management/cashier/api/client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/organization_management/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/document_circulation/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/organization_management/document_circulation/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/internat_class_diseases/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/organization_management/internat_class_diseases/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/internat_class_diseases/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/organization_management/internat_class_diseases/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/register/api/services.py" beforeDir="false" afterPath="$PROJECT_DIR$/organization_management/register/api/services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/register/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/organization_management/register/api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/register/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/organization_management/register/api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/organization_management/templates/document_circulation/form/form_in_history.html" beforeDir="false" afterPath="$PROJECT_DIR$/organization_management/templates/document_circulation/form/form_in_history.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,7 +44,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/our projects/zhiza"
+    "last_opened_file_path": "C:/projects/elmedi/new_elmedi"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

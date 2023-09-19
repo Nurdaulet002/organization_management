@@ -143,6 +143,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 APPEND_SLASH=False
 
 API_URL = '82.200.165.222:19603'
