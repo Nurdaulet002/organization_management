@@ -20,7 +20,7 @@ from .forms import ReadyPhraseForm
 from register.api.services import create_examination_result
 
 api2_url = '82.200.165.222:19603'
-api2_token = 'fae4cf4a68dd19f96e901bb5c03ec321301ae52d'
+api2_token = '020a2cef2f0e05ece1e8ccb85f35706a28c75735'
 insurance = 'insurance1'
 
 # Заполнить форму внутри ИБ
@@ -36,12 +36,18 @@ class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
             self.history = get_object_or_404(FormHistory, id=self.history)
         if self.form:
             self.form = get_object_or_404(Form, id=self.form)
-        url_customer_search_api = 'http://{}/api/customer_personal_cabinet/customer/examination/appointment?insurance={}&iin={}'.format(api2_url, insurance, self.customer.iin)
+        url_customer_search_api = 'http://82.200.165.222:19603/api/customer_personal_cabinet/customer/examination/appointment?insurance={}&iin={}'.format(insurance, self.customer.iin)
         result = requests.get(url_customer_search_api, headers={
-            'Authorization': 'Token ' + api2_token})
+            'Authorization': 'Token 020a2cef2f0e05ece1e8ccb85f35706a28c75735'})
+        print(url_customer_search_api)
+
         result.raise_for_status()
         data = result.json()
-        self.appointments = data[0].get('Data', [])
+        if data:
+            self.appointments = data[0].get('Data', [])
+        else:
+            print("No data returned from API.")
+            self.appointments = []
 
         url_customer_examination_result = 'http://{}/api/customer_personal_cabinet/customer/examination/result?insurance={}&iin={}'.format(api2_url, insurance, self.customer.iin)
         result2 = requests.get(url_customer_examination_result, headers={
@@ -50,15 +56,20 @@ class WriteFormInHistoryView(LoginRequiredMixin, TemplateResponseMixin, View):
         data2 = result2.json()
         self.mkbs = MKB10.objects.all()
         self.conclusions = Conclusion.objects.all()
-        self.results = data2[0].get('Data', [])
-
+        if data2:
+            self.results = data2[0].get('Data', [])
+        else:
+            self.results = []
         url_package_list_api = 'http://{}/api/customer_personal_cabinet/api/package?insurance={}&iin={}'.format(
             api2_url, insurance, self.customer.iin)
         result3 = requests.get(url_package_list_api, headers={
             'Authorization': 'Token ' + api2_token})
         result3.raise_for_status()
         data_package = result3.json()
-        self.packages = data_package[0].get('Data', [])
+        if data_package:
+            self.packages = data_package[0].get('Data', [])
+        else:
+            self.packages = []
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):

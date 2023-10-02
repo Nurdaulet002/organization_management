@@ -83,7 +83,7 @@
               <tr>
                 <td><span class="info-b">Дата рождения:</span>{{ customer.date_birth }}</td>
                 <td><span class="info-b">Пол:</span>{{ customer.get_gender_display |default_if_none:"---" }}</td>
-                <td><span class="info-b">ИИН:</span>2804DH5 </td>
+                <td><span class="info-b">ИИН:</span>{{ customer.iin }} </td>
               </tr>
               {% if insurances %}
                 <tr>

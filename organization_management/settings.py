@@ -146,7 +146,7 @@ STATIC_URL = '/static/'
 APPEND_SLASH=False
 
 API_URL = '82.200.165.222:19603'
-API_TOKEN = '880430a839696607383313b109e5a0599617219b'
+API_TOKEN = '020a2cef2f0e05ece1e8ccb85f35706a28c75735'
 
 try:
     from .local_settings import *

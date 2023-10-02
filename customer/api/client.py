@@ -22,7 +22,7 @@ def get_customer_by_iin(iin):
         print(f"An unexpected error occurred: {err}")
 
 api2_url = '82.200.165.222:19603'
-api2_token = 'fae4cf4a68dd19f96e901bb5c03ec321301ae52d'
+api2_token = '020a2cef2f0e05ece1e8ccb85f35706a28c75735'
 insurance = 'insurance1'
 
 def get_customer_professional_examination_by_iin(iin):
